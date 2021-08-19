@@ -1,12 +1,23 @@
 body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
-    margin: 0;
-    background-color: aliceblue;
-    overflow: hidden;
-    cursor: none;
-}
+    font-family: cursive;
+  }
 
-.cursor {
-    width: 30px;
-    transition: all ease;
-}
+ input,
+  label {
+    line-height: 1.9rem;
+  }
+
+  input[type="submit"] {
+   transform: translate(2.2%);
+   padding: 3px;
+   margin-top: 0.6rem;
+   font-weight: bold;
+  }
+
+ fieldset {
+   padding: 20px 40px;
+ }
