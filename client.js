@@ -31,8 +31,9 @@
       });
     }
 
-    async function connectToServer() {    
-      const ws = new WebSocket('ws://localhost:9898/ws');
+    async function connectToServer() {  
+      let HOST = location.origin.replace(/^(http|https)/, 'ws')  
+      const ws = new WebSocket(`${HOST}/ws`);
       return new Promise((resolve, reject) => {
         const timer = setInterval(() => {
           if(ws.readyState === 1) {
