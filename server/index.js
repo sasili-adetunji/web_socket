@@ -1,42 +1,30 @@
-const createServer = require('http').createServer;
 const fs = require('fs');
+const path = require('path');
 var WebSocketServer = require('ws').Server;
-const parse = require('url').parse;
+const express = require('express');
 
-const server = createServer((req, res) => {
-  fs.readFile(__dirname + req.url, function (err,data) {
-    if (err) {
-      res.writeHead(404);
-      res.end(JSON.stringify(err));
-      return;
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-});
+const PORT = process.env.PORT || 9898;
 
-const wss = new WebSocketServer({ noServer: true });
+const server = express()
+  .use(function (req, res, next) {
+    if (req.path.substr(-1) == '/' && req.path.length > 1) {
+      let query = req.url.slice(req.path.length)
+      res.redirect(301, req.path.slice(0, -1) + query)
+    } else next()
+  })
+  .use((req, res) => res.sendFile(path.join(__dirname, './', req.url)) )
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-      const client_data = JSON.parse(message)
-      processMessage(client_data)
-    });
-    ws.on('close', (reasonCode, description) => {
-        console.log('Client has disconnected.');
-    });
+  console.log('Client connected');
+  ws.on('message', (message) => {
+    const client_data = JSON.parse(message)
+    processMessage(client_data)
+  });
+  ws.on('close', () => console.log('Client disconnected'));
 });
-
-server.on('upgrade', function upgrade(request, socket, head) {
-  const { pathname } = parse(request.url);
-  if (pathname === '/ws') {
-    wss.handleUpgrade(request, socket, head, function done(ws) {
-      wss.emit('connection', ws, request);
-    });
-  } else {
-    socket.destroy();
-  }
-})
 
 function processMessage(message) {
   if (message.type == "event.interaction") {
@@ -50,5 +38,3 @@ function processMessage(message) {
     });
   }
 }
-const port = 9898
-server.listen(port, () => console.info(`Server is running on PORT ${port}`));
