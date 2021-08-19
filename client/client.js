@@ -8,16 +8,16 @@
       const inputField = document.getElementById('inputField')
       if (targetID === 'submitButton') {
         const client_data = {
-          type: "event.interaction",
-          data: `"${inputField.value}"`
+          type: 'event.interaction',
+          data: `${inputField.value}`
         };
         ws.send(JSON.stringify(client_data));
         inputField.value = "";
       } 
       else if (targetID === 'errorButton') {
         const client_data = {
-          type: "event.error",
-          data: `"${uniqueId()}"`
+          type: 'event.error',
+          data: `${uniqueId()}`
         };
         ws.send(JSON.stringify(client_data));
         inputField.value = "";
